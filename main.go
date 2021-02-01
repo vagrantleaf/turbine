@@ -70,13 +70,15 @@ func CreatePortsView() {
 func CreateInputField() {
 	inputFieldAdded = false
 	inputField = tview.NewInputField().
-		SetLabel("test: ").
+		SetLabel("input: ").
 		SetFieldWidth(15)
 }
 
 func ShowInputField(label string, fieldWidth int, fn OnInputFieldClosedCallback) {
 	if inputFieldAdded == false {
+		flexV.RemoveItem(hotkeysView)
 		flexV.AddItem(inputField, 1, 1, false)
+		inputField.SetLabel(label)
 		inputField.SetDoneFunc(fn)
 		app.SetFocus(inputField)
 		inputFieldAdded = true
@@ -86,6 +88,7 @@ func ShowInputField(label string, fieldWidth int, fn OnInputFieldClosedCallback)
 func CloseInputField(key tcell.Key) {
 	if inputFieldAdded == true {
 		flexV.RemoveItem(inputField)
+		flexV.AddItem(hotkeysView, 1, 1, false)
 		inputFieldAdded = false
 	}
 }

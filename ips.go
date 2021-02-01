@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"bufio"
 	"io/ioutil"
+	"regexp"
 )
 
 type IPNode struct {
@@ -74,7 +75,7 @@ func CreateIPsView() {
 
 func OnIPsViewFocused() {
 	AddHotkeyEntry("Add IP", 'a', OnAddIPHotkey)
-	AddHotkeyEntry("Delete IP", 'd', func(){ Log("Delete IP") })
+	AddHotkeyEntry("Delete IP", 'd', OnDeleteIPHotkey)
 }
 
 func OnIpsViewUnfocused() {
@@ -86,7 +87,47 @@ func OnAddIPHotkey() {
 	ShowInputField("IP to add: ", 15, func(key tcell.Key){
 		CloseInputField(key)
 		app.SetFocus(ipsView)
+		ip := inputField.GetText()
+		isValidIP := IsValidIP(ip)
+		if isValidIP {
+			if IsDuplicateIP(ip) {
+				Log("IP already exists.")
+			} else {
+				AddIPNode(ip, "Not scanned", "")
+			}
+		} else {
+			Log("Not a valid IP address.")
+		}
+		inputField.SetText("")
 	})
+}
+
+func OnDeleteIPHotkey() {
+	if ipsView.GetItemCount() == 0 {
+		return
+	}
+
+	selectedIp, _ := ipsView.GetItemText(ipsView.GetCurrentItem())
+	ipsView.RemoveItem(ipsView.GetCurrentItem())
+	for idx, node := range(ipNodes) {
+		if (node.Ip == selectedIp) {
+			ipNodes = append(ipNodes[:idx], ipNodes[idx+1:]...)
+		}
+	}
+}
+
+func IsValidIP(text string) bool {
+	exp := regexp.MustCompile(`^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$`)
+	return exp.MatchString(text)
+}
+
+func IsDuplicateIP(address string) bool {
+	for _, node := range(ipNodes) {
+		if node.Ip == address {
+			return true
+		}
+	}
+	return false
 }
 
 func IPsInputHandler(event *tcell.EventKey) *tcell.EventKey {
