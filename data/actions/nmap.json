@@ -1,0 +1,5 @@
+{
+	"Name": "Nmap",
+	"NodeType": "IP",
+	"Command": "nmap -T4 -A -p- $node"
+}

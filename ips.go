@@ -168,11 +168,5 @@ func AddIPNode(ip string, state string, note string) {
 func ShowActions(ipNode IPNode) {
 	Log("Showing actions")
 
-	modal := tview.NewModal().
-		SetText("Action to run").
-		AddButtons([]string{"Nmap", "Reverse DNS lookup"}).
-		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-			Log(buttonLabel)
-		})
-	app.SetFocus(modal)
+	actionsModal.Show(ipNode.Node)
 }

@@ -11,7 +11,7 @@ var (
 	project      string
 	app          *tview.Application
 	pages        *tview.Pages
-	actionsModal *tview.Flex
+	actionsModal *ActionsModal
 	ribbonView   *tview.TextView
 	logView      *tview.TextView
 	ipsView      *tview.List
@@ -25,27 +25,6 @@ var (
 )
 
 type OnInputFieldClosedCallback func(tcell.Key)
-
-func CreateActionsModal() {
-	list := tview.NewList()
-	list.SetBorder(true).SetTitle("Actions")
-	width := 40
-	height := 10
-	actionsModal = tview.NewFlex().
-		AddItem(nil, 0, 1, false).
-		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
-			AddItem(nil, 0, 1, false).
-			AddItem(list, height, 1, false).
-			AddItem(nil, 0, 1, false), width, 1, false).
-		AddItem(nil, 0, 1, false)
-
-	list.AddItem("Port scan", "nmap -A -T4 -p- <ip>", '*', func() {
-
-	})
-
-	list.AddItem("Reverse DNS", "host <ip>", '*', nil)
-
-}
 
 func CreateLogView() {
 	logView = tview.NewTextView().
@@ -149,13 +128,14 @@ func main() {
 	portsRoot.AddChild(port80)
 	portsRoot.AddChild(port8080)
 
-	CreateActionsModal()
+	actionsModal = CreateActionsModal()
 
 	pages = tview.NewPages().
 		AddPage("background", flex, true, true).
-		AddPage("actionsModal", actionsModal, true, true)
+		AddPage("actionsModal", actionsModal.flex, true, false) // Actions modal starts hidden.
 
 	LoadProject()
+	DeserialiseActions()
 
 	if err := app.SetRoot(pages, true).SetFocus(ipsView).Run(); err != nil {
 		fmt.Printf("Error running application: %s\n", err)
