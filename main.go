@@ -135,7 +135,7 @@ func main() {
 		AddPage("actionsModal", actionsModal.flex, true, false) // Actions modal starts hidden.
 
 	LoadProject()
-	DeserialiseActions()
+	RegisterActions()
 
 	if err := app.SetRoot(pages, true).SetFocus(ipsView).Run(); err != nil {
 		fmt.Printf("Error running application: %s\n", err)

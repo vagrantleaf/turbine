@@ -65,9 +65,8 @@ func NextRibbonEntry() {
 		if selectedRibbonEntry.onFocusedCallback != nil {
 			selectedRibbonEntry.onFocusedCallback()
 		}
-
-		UpdateRibbon()
-		app.SetFocus(selectedRibbonEntry.view)
+		
+		SelectRibbonEntry()
 	}
 }
 
@@ -83,9 +82,13 @@ func PreviousRibbonEntry() {
 			selectedRibbonEntry.onFocusedCallback()
 		}
 
-		UpdateRibbon()
-		app.SetFocus(selectedRibbonEntry.view)
+		SelectRibbonEntry()
 	}
+}
+
+func SelectRibbonEntry() {
+	UpdateRibbon()
+	app.SetFocus(selectedRibbonEntry.view)
 }
 
 func UpdateRibbon() {

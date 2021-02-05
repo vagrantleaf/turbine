@@ -1,24 +1,66 @@
 package main
 
 import (
-	"encoding/json"
-	//"log"
-	//"os"
-	"path/filepath"
-	//"bufio"
-	"io/ioutil"
-	"fmt"
+	"os/exec"
 )
 
+type ActionAvailableFn func() bool
+type ActionCommandFn func()
 
 type Action struct {
-	Name string
-	NodeType string
-	Command string
+	Name        string
+	Description string
+	NodeType    string
+	CommandFn   ActionCommandFn
 }
 
 var actions []Action
 
+func RegisterActions() {
+	RegisterActivePortScanAction()
+	RegisterPassivePortScanAction()
+}
+
+func RegisterActivePortScanAction() {
+	if IsActivePortScanAvailable() {
+		action := Action{
+			"Active port scan",
+			"Comprehensive TCP port scan with service discovery.",
+			"IP",
+			ActivePortScanCommand,
+		}
+		actions = append(actions, action)
+	}
+}
+
+func RegisterPassivePortScanAction() {
+	action := Action{
+		"Passive port scan",
+		"Use Shodan to retrieve port scan information.",
+		"IP",
+		nil,
+	}
+	actions = append(actions, action)
+}
+
+func IsActivePortScanAvailable() bool {
+	_, err := exec.LookPath("nmap")
+	if err != nil {
+		Log("WARNING: Active Port Scan action not available: couldn't find 'nmap'.")
+		return false
+	}
+	return true
+}
+
+func ActivePortScanCommand() {
+	ActivePortScanCompleted()
+}
+
+func ActivePortScanCompleted() {
+
+}
+
+/*
 func DeserialiseActions() {
 	actionsDir := "data/actions"
 	files, dirErr := ioutil.ReadDir(actionsDir)
@@ -54,5 +96,5 @@ func DeserialiseActions() {
 
 	Log(fmt.Sprintf("Loaded %d / %d actions.", len(actions), jsonFiles))
 }
-
+*/
 

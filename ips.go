@@ -166,7 +166,5 @@ func AddIPNode(ip string, state string, note string) {
 }
 
 func ShowActions(ipNode IPNode) {
-	Log("Showing actions")
-
 	actionsModal.Show(ipNode.Node)
 }
