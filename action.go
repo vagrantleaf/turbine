@@ -53,6 +53,7 @@ func IsActivePortScanAvailable() bool {
 }
 
 func ActivePortScanCommand() {
+	Log("Running active port scan")
 	ActivePortScanCompleted()
 }
 

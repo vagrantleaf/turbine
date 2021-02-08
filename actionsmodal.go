@@ -29,6 +29,9 @@ func CreateActionsModal() *ActionsModal {
 
 func (modal *ActionsModal) Show(node Node) {
 	modal.list.Clear()
+
+	// The action's callback is intentionally left empty, as we need to close
+	// modal afterwards. This is handled in ActionsModalInputHandler().
 	for _, action := range(actions) {
 		modal.list.AddItem(action.Name, action.Description, '.', nil)
 	}
@@ -44,6 +47,13 @@ func (modal *ActionsModal) Hide() {
 
 func ActionsModalInputHandler(event *tcell.EventKey) *tcell.EventKey {
 	if event.Key() == tcell.KeyEnter {
+		actionName, _ := actionsModal.list.GetItemText(actionsModal.list.GetCurrentItem())
+		for _, action := range(actions) {
+			if action.Name == actionName {
+				action.CommandFn()
+			}
+		}
+
 		actionsModal.Hide()
 		return nil
 	} else if event.Key() == tcell.KeyEscape {
@@ -53,4 +63,3 @@ func ActionsModalInputHandler(event *tcell.EventKey) *tcell.EventKey {
 
 	return event
 }
-
