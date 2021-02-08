@@ -24,7 +24,7 @@ var ipNodes []IPNode
 func SerialiseIPs() {
 	res, _ := json.Marshal(ipNodes)
 
-	ipsFilePath := filepath.Join(project, "ips.json")
+	ipsFilePath := filepath.Join(workspace, "ips.json")
 
 	file, fileErr := os.Create(ipsFilePath)
 	if fileErr != nil {
@@ -38,11 +38,10 @@ func SerialiseIPs() {
 }
 
 func DeserialiseIPs() {
-	ipsFilePath := filepath.Join(project, "ips.json")
+	ipsFilePath := filepath.Join(workspace, "ips.json")
 
 	data, fileErr := ioutil.ReadFile(ipsFilePath)
 	if fileErr != nil {
-		log.Fatal(fileErr)
 		return
 	}
 

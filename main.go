@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 	"os"
+	"os/user"
 	"github.com/rivo/tview"
 	"github.com/gdamore/tcell/v2"
 )
 
 var (
-	project      string
+	workspace    string
 	app          *tview.Application
 	pages        *tview.Pages
 	actionsModal *ActionsModal
@@ -110,14 +112,21 @@ func SaveProject() {
 
 func main() {
 	if len(os.Args) == 1 {
-		fmt.Printf("Usage: turbine <project_name>")
+		fmt.Printf("Usage: turbine <workspace_name>")
 		return
 	}
 
-	project = os.Args[1]
+	user, userErr := user.Current()
+	if userErr != nil {
+		return
+	}
 
-	// TODO: Check that the project name is valid for the OS.
-	os.Mkdir(project, 0700)
+	// TODO: Check that the workspace name is valid for the OS.
+	workspacePath := filepath.Join(user.HomeDir, ".turbine")
+	os.Mkdir(workspacePath, 0700)
+
+	workspace = filepath.Join(workspacePath, os.Args[1])
+	os.Mkdir(workspace, 0700)
 
 	app = tview.NewApplication()
 
