@@ -1,14 +1,14 @@
 package main
 
 import (
+	"bufio"
+	"encoding/json"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"bufio"
-	"io/ioutil"
 	"regexp"
 )
 
@@ -50,9 +50,9 @@ func DeserialiseIPs() {
 		log.Fatal(unmarshalErr)
 		return
 	}
-	
+
 	// Add all IPs nodes to the panel after we load them from disk.
-	for _, ipNode := range(ipNodes) {
+	for _, ipNode := range ipNodes {
 		noteTag := '.'
 		if len(ipNode.Note) > 0 {
 			noteTag = 'N'
@@ -83,7 +83,7 @@ func OnIpsViewUnfocused() {
 }
 
 func OnAddIPHotkey() {
-	ShowInputField("IP to add: ", 15, func(key tcell.Key){
+	ShowInputField("IP to add: ", 15, func(key tcell.Key) {
 		CloseInputField(key)
 		app.SetFocus(ipsView)
 		ip := inputField.GetText()
@@ -108,8 +108,8 @@ func OnDeleteIPHotkey() {
 
 	selectedIp, _ := ipsView.GetItemText(ipsView.GetCurrentItem())
 	ipsView.RemoveItem(ipsView.GetCurrentItem())
-	for idx, node := range(ipNodes) {
-		if (node.Ip == selectedIp) {
+	for idx, node := range ipNodes {
+		if node.Ip == selectedIp {
 			ipNodes = append(ipNodes[:idx], ipNodes[idx+1:]...)
 		}
 	}
@@ -121,7 +121,7 @@ func IsValidIP(text string) bool {
 }
 
 func IsDuplicateIP(address string) bool {
-	for _, node := range(ipNodes) {
+	for _, node := range ipNodes {
 		if node.Ip == address {
 			return true
 		}
@@ -144,12 +144,12 @@ func IPsInputHandler(event *tcell.EventKey) *tcell.EventKey {
 
 func AddIPNode(ip string, state string, note string) {
 	ipNode := IPNode{
-		Ip: ip, 
-		State: state, 
-		Note: note,
+		Ip:    ip,
+		State: state,
+		Note:  note,
 		Node: Node{
 			NodeType: "IP",
-			Name: ip, 
+			Name:     ip,
 		},
 	}
 	ipNodes = append(ipNodes, ipNode)
@@ -165,5 +165,5 @@ func AddIPNode(ip string, state string, note string) {
 }
 
 func ShowActions(ipNode IPNode) {
-	actionsModal.Show(ipNode.Node)
+	actionsModal.Show(&ipNode.Node)
 }

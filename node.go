@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 )
 
 type Node struct {
 	NodeType string
-	Name string
+	Name     string
 }
 
 func (node Node) Serialise() {
@@ -19,4 +19,3 @@ func (node Node) Serialise() {
 
 	Log(string(res))
 }
-

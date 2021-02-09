@@ -2,28 +2,28 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 	"os"
 	"os/user"
-	"github.com/rivo/tview"
-	"github.com/gdamore/tcell/v2"
+	"path/filepath"
 )
 
 var (
-	workspace    string
-	app          *tview.Application
-	pages        *tview.Pages
-	actionsModal *ActionsModal
-	ribbonView   *tview.TextView
-	logView      *tview.TextView
-	ipsView      *tview.List
-	portsView    *tview.TreeView
-	portsRoot    *tview.TreeNode
-	hotkeysView  *tview.TextView
-	inputField   *tview.InputField
+	workspace       string
+	app             *tview.Application
+	pages           *tview.Pages
+	actionsModal    *ActionsModal
+	ribbonView      *tview.TextView
+	logView         *tview.TextView
+	ipsView         *tview.List
+	portsView       *tview.TreeView
+	portsRoot       *tview.TreeNode
+	hotkeysView     *tview.TextView
+	inputField      *tview.InputField
 	inputFieldAdded bool
-	flexH        *tview.Flex
-	flexV        *tview.Flex
+	flexH           *tview.Flex
+	flexV           *tview.Flex
 )
 
 type OnInputFieldClosedCallback func(tcell.Key)
