@@ -1,7 +1,7 @@
 package main
 
 type ActionAvailableFn func() bool
-type ActionCommandFn func(*Node)
+type ActionCommandFn func(*ActionInstance)
 
 type Action struct {
 	Name        string
@@ -13,6 +13,7 @@ type Action struct {
 type ActionInstance struct {
 	Action *Action
 	Node   *Node
+	Output string
 }
 
 var actions []Action
@@ -31,6 +32,7 @@ func (action *Action) Instantiate(node *Node) ActionInstance {
 	instance := ActionInstance{
 		action,
 		node,
+		"",
 	}
 
 	actionInstances = append(actionInstances, instance)
@@ -39,5 +41,5 @@ func (action *Action) Instantiate(node *Node) ActionInstance {
 }
 
 func (instance *ActionInstance) Run() {
-	instance.Action.CommandFn(instance.Node)
+	instance.Action.CommandFn(instance)
 }

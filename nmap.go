@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
 	"os/exec"
+	"strings"
 )
 
 func RegisterActivePortScan() {
@@ -26,17 +28,20 @@ func IsActivePortScanAvailable() bool {
 	return true
 }
 
-func ActivePortScanCommand(node *Node) {
-	Log(fmt.Sprintf("Running active port scan on %s.", node.Name))
+func ActivePortScanCommand(instance *ActionInstance) {
+	Log(fmt.Sprintf("Running active port scan on %s.", instance.Node.Name))
 
 	go func() {
-		cmd := exec.Command("nmap", "-T4", "-p80,443", "-oX", "-", "--stats-every", "1s", "45.33.32.156")
+		cmd := exec.Command("nmap", "-T4", "-p-", "-oX", "-", "--stats-every", "1s", "45.33.32.156")
 		var out outstream
 		cmd.Stdout = out
 		if err := cmd.Start(); err != nil {
 			Log("Error while running nmap")
 		}
 		cmd.Wait()
+
+		outputBytes, _ := cmd.Output()
+		instance.Output = string(outputBytes)
 	}()
 
 	ActivePortScanCompleted()
@@ -48,7 +53,20 @@ func ActivePortScanCompleted() {
 
 type outstream struct{}
 
+type TaskProgress struct {
+	XMLName xml.Name `xml:"taskprogress"`
+	Percent string   `xml:"percent,attr"`
+}
+
 func (out outstream) Write(p []byte) (int, error) {
-	Log(string(p))
+	output := string(p)
+	if strings.Contains(output, "<taskprogress") {
+		var taskProgress TaskProgress
+		err := xml.Unmarshal(p, &taskProgress)
+		if err != nil {
+			Log(err.Error())
+		}
+		Log(fmt.Sprintf("Nmap progress: %s", taskProgress.Percent))
+	}
 	return len(p), nil
 }
