@@ -17,8 +17,7 @@ var (
 	ribbonView      *tview.TextView
 	logView         *tview.TextView
 	ipsView         *tview.List
-	portsView       *tview.TreeView
-	portsRoot       *tview.TreeNode
+	portsView       *tview.Table
 	hotkeysView     *tview.TextView
 	inputField      *tview.InputField
 	inputFieldAdded bool
@@ -37,15 +36,6 @@ func CreateLogView() {
 		})
 	logView.SetBorder(true)
 	logView.SetTitle("Log")
-}
-
-func CreatePortsView() {
-	portsRoot = tview.NewTreeNode("192.168.0.1")
-	portsView = tview.NewTreeView().SetRoot(portsRoot).SetCurrentNode(portsRoot)
-	portsView.SetBorder(true)
-	portsView.SetTitle("Ports")
-	portsView.SetInputCapture(RibbonInputHandler)
-	AddRibbonEntry(portsView.Box, "Ports", nil, nil)
 }
 
 func CreateInputField() {
@@ -131,12 +121,6 @@ func main() {
 	app = tview.NewApplication()
 
 	flex := CreateLayout()
-
-	port80 := tview.NewTreeNode("80")
-	port8080 := tview.NewTreeNode("8080")
-	portsRoot.AddChild(port80)
-	portsRoot.AddChild(port8080)
-
 	actionsModal = CreateActionsModal()
 
 	pages = tview.NewPages().
